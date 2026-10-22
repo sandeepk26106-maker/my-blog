@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MyBlog — Homepage</title>
+  <link rel="stylesheet" href="assets/theme.css" />
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script src="assets/auth.js"></script>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { useState, useEffect, useMemo } = React;
+
+const POSTS = [
+  { id: 1,  title: "Getting Started with React",     excerpt: "Learn components, props and state from scratch.",        author: "Aarav",  date: "2026-10-20", category: "React",     img: "https://picsum.photos/seed/blog1/600/300" },
+  { id: 2,  title: "CSS Grid in 10 Minutes",         excerpt: "Build responsive layouts without the pain.",               author: "Diya",   date: "2026-10-18", category: "CSS",       img: "https://picsum.photos/seed/blog2/600/300" },
+  { id: 3,  title: "JavaScript ES2026 Features",      excerpt: "What is new in modern JavaScript.",                        author: "Kabir",  date: "2026-10-15", category: "JavaScript",img: "https://picsum.photos/seed/blog3/600/300" },
+  { id: 4,  title: "Dark Mode Done Right",            excerpt: "Theme toggles with CSS variables, done cleanly.",          author: "Meera",  date: "2026-10-12", category: "UX",        img: "https://picsum.photos/seed/blog4/600/300" },
+  { id: 5,  title: "Blog SEO Basics",                 excerpt: "Simple tricks to get your posts discovered.",               author: "Aarav",  date: "2026-10-10", category: "SEO",       img: "https://picsum.photos/seed/blog5/600/300" },
+  { id: 6,  title: "Deploy React for Free",           excerpt: "Vercel, Netlify and Firebase — pick one and ship.",         author: "Rohan",  date: "2026-10-08", category: "DevOps",    img: "https://picsum.photos/seed/blog6/600/300" },
+  { id: 7,  title: "Mastering Flexbox Layouts",       excerpt: "One layout system for every screen size.",                 author: "Diya",   date: "2026-10-05", category: "CSS",       img: "https://picsum.photos/seed/blog7/600/300" },
+  { id: 8,  title: "React Hooks Cheat Sheet",         excerpt: "useState, useEffect and everything between.",              author: "Kabir",  date: "2026-10-02", category: "React",     img: "https://picsum.photos/seed/blog8/600/300" },
+  { id: 9,  title: "Writing Tech Posts That Get Read", excerpt: "Hooks, structure and editing habits that pay off.",         author: "Meera",  date: "2026-09-29", category: "Writing",   img: "https://picsum.photos/seed/blog9/600/300" },
+  { id: 10, title: "Git Workflow for Solo Devs",       excerpt: "Branches, commits and a clean history.",                    author: "Rohan",  date: "2026-09-26", category: "DevOps",    img: "https://picsum.photos/seed/blog10/600/300" },
+];
+
+function Header({ session, query, setQuery }) {
+  const [theme, setTheme] = useState(AuthStore.getTheme());
+  const [showSearch, setShowSearch] = useState(false);
+
+  useEffect(() => {
+    document.documentElement.setAttribute("data-theme", theme);
+    AuthStore.setTheme(theme);
+  }, [theme]);
+
+  const scrollTo = (id) => document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+
+  return (
+    <header className="header">
+      <div className="container header-inner">
+        <a className="logo" href="index.html">MyBlog</a>
+        <nav className="nav">
+          <a href="index.html">Home</a>
+          <a href="#blog">Blog</a>
+          <a href="#about">About</a>
+          <a href="#contact">Contact</a>
+        </nav>
+        <div className="spacer" />
+        {showSearch && (
+          <input aria-label="Search posts" placeholder="Search posts…" value={query}
+            onChange={e => setQuery(e.target.value)}
+            style={{ padding: "8px 12px", borderRadius: 8, border: "1px solid var(--border)", background: "var(--bg)", color: "var(--text)" }} />
+        )}
+        <button className="icon-btn" onClick={() => setShowSearch(s => !s)} title="Search posts">🔍</button>
+        <button className="icon-btn" onClick={() => setTheme(t => (t === "light" ? "dark" : "light"))} title="Toggle theme">
+          {theme === "light" ? "🌙" : "☀️"}
+        </button>
+        {session ? (
+          <a className="auth-link" href="auth/dashboard.html">Hi, {session.name.split(" ")[0]}</a>
+        ) : (
+          <a className="auth-link" href="auth/auth.html">Login</a>
+        )}
+        <button className="btn" onClick={() => scrollTo("newsletter")}>Subscribe</button>
+      </div>
+    </header>
+  );
+}
+
+function PostCard({ post }) {
+  return (
+    <article className="card" data-testid="post-card">
+      <img src={post.img} alt={post.title} loading="lazy" />
+      <div className="card-body">
+        <span className="cat">{post.category}</span>
+        <h3>{post.title}</h3>
+        <p>{post.excerpt}</p>
+        <div className="meta">{post.author} · {post.date}</div>
+      </div>
+    </article>
+  );
+}
+
+function App() {
+  const [query, setQuery] = useState("");
+  const [email, setEmail] = useState("");
+  const [msg, setMsg] = useState({ t: "", ok: true });
+  const [session, setSession] = useState(AuthStore.getSession());
+
+  useEffect(() => {
+    const onStorage = (e) => {
+      if (e.key === AuthStore.SESSION_KEY) setSession(AuthStore.getSession());
+    };
+    window.addEventListener("storage", onStorage);
+    return () => window.removeEventListener("storage", onStorage);
+  }, []);
+
+  const filtered = useMemo(
+    () => POSTS.filter(p => p.title.toLowerCase().includes(query.toLowerCase())),
+    [query]
+  );
+
+  const subscribe = (e) => {
+    e.preventDefault();
+    if (!AuthStore.isValidEmail(email)) {
+      setMsg({ t: "Enter a valid email address.", ok: false });
+      return;
+    }
+    setMsg({ t: "Subscribed successfully!", ok: true });
+    setEmail("");
+  };
+
+  const scrollTo = (id) => document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+
+  return (
+    <div>
+      <Header session={session} query={query} setQuery={setQuery} />
+
+      <section className="hero container">
+        <h1>Welcome to MyBlog</h1>
+        <p>Simple ideas on React, CSS and the web.</p>
+        <button className="btn" onClick={() => scrollTo("posts")}>Start Reading</button>
+      </section>
+
+      <main id="posts" className="container">
+        <h2 id="blog" className="section-title">Latest posts</h2>
+        {filtered.length === 0 ? (
+          <p className="empty">No posts match your search.</p>
+        ) : (
+          <div className="grid">
+            {filtered.map(p => (
+              <PostCard key={p.id} post={p} />
+            ))}
+          </div>
+        )}
+      </main>
+
+      <section id="newsletter" className="newsletter">
+        <div className="container">
+          <h2>Subscribe to newsletter</h2>
+          <p style={{ color: "var(--muted)", margin: "8px 0 0" }}>Get new posts in your inbox.</p>
+          <form onSubmit={subscribe}>
+            <input type="email" placeholder="you@example.com" aria-label="Email for newsletter"
+              value={email} onChange={e => setEmail(e.target.value)} />
+            {" "}
+            <button className="btn" type="submit">Subscribe</button>
+          </form>
+          {msg.t && <p className={msg.ok ? "msg msg-ok" : "msg msg-err"} style={{ marginTop: "10px" }}>{msg.t}</p>}
+        </div>
+      </section>
+
+      <footer className="footer container" id="contact">
+        <div><b>MyBlog</b><br />© 2026 MyBlog. All rights reserved.</div>
+        <div id="about">About<br />Categories<br />Contact: hello@myblog.test</div>
+        <div>Built with React · Light + dark mode<br />
+          <a href="auth/auth.html">Login / Sign up</a>
+        </div>
+      </footer>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+</script>
+</body>
+</html>

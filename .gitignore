@@ -1,0 +1,21 @@
+# Dependencies
+node_modules/
+
+# Temp / lock files
+~$*
+.tmp-*
+*.tmp
+*.bak
+
+# Test & QA artifacts
+evidence/
+test-results/
+playwright-report/
+
+# Local env
+.env
+.env.local
+
+# OS
+.DS_Store
+Thumbs.db

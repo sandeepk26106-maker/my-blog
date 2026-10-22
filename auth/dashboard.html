@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MyBlog — Dashboard</title>
+  <link rel="stylesheet" href="../assets/theme.css" />
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script src="../assets/auth.js"></script>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { useState, useEffect } = React;
+
+function App() {
+  const [theme, setTheme] = useState(AuthStore.getTheme());
+  const [session, setSession] = useState(null);
+  const [checked, setChecked] = useState(false);
+
+  useEffect(() => {
+    document.documentElement.setAttribute("data-theme", theme);
+    AuthStore.setTheme(theme);
+  }, [theme]);
+
+  useEffect(() => {
+    const s = AuthStore.getSession();
+    if (!s) {
+      window.location.replace("auth.html");
+      return;
+    }
+    setSession(s);
+    setChecked(true);
+  }, []);
+
+  const logout = () => {
+    AuthStore.logout();
+    window.location.href = "../index.html";
+  };
+
+  return (
+    <div>
+      <header className="header">
+        <div className="container header-inner">
+          <a className="logo" href="../index.html">MyBlog</a>
+          <nav className="nav">
+            <a href="../index.html">Home</a>
+            <a href="../index.html#blog">Blog</a>
+            <a href="../index.html#about">About</a>
+          </nav>
+          <div className="spacer" />
+          <button className="icon-btn" onClick={() => setTheme(t => t === "light" ? "dark" : "light")} title="Toggle theme">
+            {theme === "light" ? "🌙" : "☀️"}
+          </button>
+          <button className="btn btn-ghost" onClick={logout}>Log out</button>
+        </div>
+      </header>
+
+      <main className="container">
+        {!checked ? (
+          <p className="empty">Redirecting to login…</p>
+        ) : (
+          <>
+            <div className="hero" style={{ paddingBottom: "10px" }}>
+              <h1>Welcome, {session.name} 👋</h1>
+              <p>This is your MyBlog dashboard.</p>
+            </div>
+
+            <div className="dash-card">
+              <h2 style={{ marginBottom: "10px" }}>Profile</h2>
+              <div className="dash-row"><span>Name</span><span>{session.name}</span></div>
+              <div className="dash-row"><span>Email</span><span>{session.email}</span></div>
+              <div className="dash-row"><span>Signed in at</span><span>{new Date(session.loginAt).toLocaleString()}</span></div>
+              <div className="dash-row"><span>Saved posts</span><span>0</span></div>
+            </div>
+
+            <div className="dash-card">
+              <h2 style={{ marginBottom: "10px" }}>Quick actions</h2>
+              <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
+                <a className="btn" href="../index.html#blog">Read latest posts</a>
+                <button className="btn btn-ghost" onClick={logout}>Log out</button>
+              </div>
+            </div>
+          </>
+        )}
+      </main>
+
+      <footer className="footer container">
+        <div><b>MyBlog</b><br />© 2026 MyBlog. All rights reserved.</div>
+        <div>About<br />Categories<br />Contact: hello@myblog.test</div>
+      </footer>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+</script>
+</body>
+</html>

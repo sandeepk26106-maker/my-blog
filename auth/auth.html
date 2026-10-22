@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MyBlog — Login / Signup</title>
+  <link rel="stylesheet" href="../assets/theme.css" />
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script src="../assets/auth.js"></script>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { useState, useEffect } = React;
+
+function Header() {
+  const [theme, setTheme] = useState(AuthStore.getTheme());
+  useEffect(() => {
+    document.documentElement.setAttribute("data-theme", theme);
+    AuthStore.setTheme(theme);
+  }, [theme]);
+  return (
+    <header className="header">
+      <div className="container header-inner">
+        <a className="logo" href="../index.html">MyBlog</a>
+        <div className="spacer" />
+        <button className="icon-btn" onClick={() => setTheme(t => t === "light" ? "dark" : "light")} title="Toggle theme">
+          {theme === "light" ? "🌙" : "☀️"}
+        </button>
+        <a className="auth-link" href="../index.html">← Back to home</a>
+      </div>
+    </header>
+  );
+}
+
+function LoginForm({ onDone }) {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [busy, setBusy] = useState(false);
+
+  const submit = (e) => {
+    e.preventDefault();
+    setError("");
+    setBusy(true);
+    const res = AuthStore.login({ email, password });
+    setBusy(false);
+    if (!res.ok) { setError(res.error); return; }
+    onDone(res.user, "Signed in successfully!");
+  };
+
+  return (
+    <form onSubmit={submit} noValidate>
+      {error && <div className="msg msg-err" role="alert">{error}</div>}
+      <div className="field">
+        <label htmlFor="login-email">Email</label>
+        <input id="login-email" type="email" autoComplete="email" placeholder="you@example.com"
+          value={email} onChange={e => setEmail(e.target.value)} />
+      </div>
+      <div className="field">
+        <label htmlFor="login-password">Password</label>
+        <input id="login-password" type="password" autoComplete="current-password" placeholder="At least 6 characters"
+          value={password} onChange={e => setPassword(e.target.value)} />
+      </div>
+      <button className="btn btn-block" type="submit" disabled={busy}>{busy ? "Signing in…" : "Login"}</button>
+    </form>
+  );
+}
+
+function SignupForm({ onDone }) {
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirm, setConfirm] = useState("");
+  const [error, setError] = useState("");
+  const [busy, setBusy] = useState(false);
+
+  const submit = (e) => {
+    e.preventDefault();
+    setError("");
+    if (password !== confirm) { setError("Passwords do not match."); return; }
+    setBusy(true);
+    const res = AuthStore.signup({ name, email, password });
+    setBusy(false);
+    if (!res.ok) { setError(res.error); return; }
+    onDone(res.user, "Account created! Redirecting…");
+  };
+
+  return (
+    <form onSubmit={submit} noValidate>
+      {error && <div className="msg msg-err" role="alert">{error}</div>}
+      <div className="field">
+        <label htmlFor="su-name">Name</label>
+        <input id="su-name" type="text" autoComplete="name" placeholder="Your name"
+          value={name} onChange={e => setName(e.target.value)} />
+      </div>
+      <div className="field">
+        <label htmlFor="su-email">Email</label>
+        <input id="su-email" type="email" autoComplete="email" placeholder="you@example.com"
+          value={email} onChange={e => setEmail(e.target.value)} />
+      </div>
+      <div className="field">
+        <label htmlFor="su-password">Password</label>
+        <input id="su-password" type="password" autoComplete="new-password" placeholder="At least 6 characters"
+          value={password} onChange={e => setPassword(e.target.value)} />
+      </div>
+      <div className="field">
+        <label htmlFor="su-confirm">Confirm password</label>
+        <input id="su-confirm" type="password" autoComplete="new-password" placeholder="Repeat password"
+          value={confirm} onChange={e => setConfirm(e.target.value)} />
+      </div>
+      <button className="btn btn-block" type="submit" disabled={busy}>{busy ? "Creating account…" : "Sign up"}</button>
+    </form>
+  );
+}
+
+function App() {
+  const [tab, setTab] = useState("login");
+  const [status, setStatus] = useState({ type: "", text: "" });
+  const [session, setSession] = useState(AuthStore.getSession());
+
+  const onDone = (user, text) => {
+    setStatus({ type: "ok", text });
+    setSession(AuthStore.getSession());
+    setTimeout(() => { window.location.href = "dashboard.html"; }, 900);
+  };
+
+  const switchTab = (next) => {
+    setTab(next);
+    setStatus({ type: "", text: "" });
+  };
+
+  return (
+    <div>
+      <Header />
+      <main className="auth-wrap">
+        <div className="auth-card">
+          {session ? (
+            <div>
+              <div className="msg msg-ok">You are already signed in as {session.name}.</div>
+              <a className="btn btn-block" href="dashboard.html" style={{ display: "block", textAlign: "center" }}>Go to dashboard</a>
+              <button className="link-btn" style={{ marginTop: "12px" }}
+                onClick={() => { AuthStore.logout(); setSession(null); setStatus({ type: "", text: "" }); }}>Log out</button>
+            </div>
+          ) : (
+            <>
+              <div className="tabs" role="tablist">
+                <button className={"tab " + (tab === "login" ? "active" : "")} role="tab"
+                  aria-selected={tab === "login"} onClick={() => switchTab("login")}>Login</button>
+                <button className={"tab " + (tab === "signup" ? "active" : "")} role="tab"
+                  aria-selected={tab === "signup"} onClick={() => switchTab("signup")}>Sign up</button>
+              </div>
+
+              {status.type === "ok" && <div className="msg msg-ok" role="status">{status.text}</div>}
+
+              {tab === "login"
+                ? <LoginForm onDone={onDone} />
+                : <SignupForm onDone={onDone} />}
+
+              <p className="form-foot">
+                {tab === "login"
+                  ? <>New to MyBlog? <button className="link-btn" onClick={() => switchTab("signup")}>Create an account</button></>
+                  : <>Already have an account? <button className="link-btn" onClick={() => switchTab("login")}>Login</button></>}
+              </p>
+            </>
+          )}
+        </div>
+      </main>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+</script>
+</body>
+</html>
