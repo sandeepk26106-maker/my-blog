@@ -16,23 +16,42 @@ protected dashboard.
 - **Post reader page** (`post.html?slug=…`) — cover, meta, auto table of contents,
   full article, related posts
 - **10 full articles** — Hinglish, long-form, code examples, tables (780–1400 words each)
+- **Detailed About section** on the homepage — mission, stats, topic chips, author cards
+- **About page** (`about/about.html`) — who we are, what we write about, authors, stats,
+  contact details + validated contact form
 - **Newsletter** — client-side email validation + success/error states
 - **Light + dark mode** — CSS variables, toggle persists in `localStorage`
 - **Login / Signup** — single page with tabs, email + password, full validation
 - **Protected dashboard** — redirects anonymous visitors to the auth page
 - **Responsive** — mobile-first, no horizontal scroll at 375px
 
+## Contact
+
+| Field | Value |
+| ----- | ----- |
+| Name | **HIGH BLOGGING** |
+| Phone | **6306260243** |
+| Address | **Ghurwara Raebareli (UP)** |
+| Pin code | **229125** |
+
+Sab contact details `assets/site.js` me hain — ek jagah badlo, har page update ho jayega.
+
 ## Folder structure
 
 ```
 BLOG/
-├── index.html            # Homepage (React, 10 posts)
+├── index.html            # Homepage (React, 10 posts + About section)
 ├── post.html             # Post reader page (?slug=…)
 ├── requirements.md       # Homepage requirement spec
 ├── test-cases.md         # Homepage acceptance tests
 ├── assets/
 │   ├── theme.css         # Shared light + dark theme, components, prose styles
+│   ├── site.js           # Site info: owner, contact, topics, authors, stats
 │   └── auth.js           # Shared AuthStore (localStorage mock)
+├── about/
+│   ├── about.html        # About page + contact form
+│   ├── requirements.md   # About spec
+│   └── test-cases.md     # About tests
 ├── blog-posts/
 │   ├── posts.js          # All 10 articles (window.BLOG_POSTS)
 │   ├── requirements.md   # Content + reader spec

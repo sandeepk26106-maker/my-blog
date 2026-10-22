@@ -43,16 +43,29 @@
 | N02 | Valid email | Enter valid email, submit | "Subscribed successfully!" shown |
 | N03 | Invalid email | Enter invalid email, submit | "Enter a valid email address." shown |
 
-## 5. Footer
+## 6. About & Contact (homepage)
+
+| ID | Scenario | Steps | Expected Result |
+| --- | -------- | ----- | --------------- |
+| A01 | About section renders | Load page, scroll below posts | "About MyBlog" section visible |
+| A02 | Stats tiles | Inspect stats | 4 tiles: 10 Articles, 7 Topics, 5 Authors, 100% Free |
+| A03 | Topic chips | Inspect chips | 7 topics listed |
+| A04 | Author cards | Inspect authors | 5 cards with initials, name, role, bio |
+| A05 | Contact card | Inspect contact | HIGH BLOGGING, 6306260243, Ghurwara Raebareli (UP), 229125 |
+| A06 | Phone link | Inspect phone | `href="tel:+916306260243"` |
+| A07 | About page CTA | Click "Full about page →" | `about/about.html` opens |
+
+## 7. Footer
 
 | ID | Scenario | Steps | Expected Result |
 | --- | -------- | ----- | --------------- |
 | F01 | Footer visible | Scroll to bottom | Footer with link columns appears |
 | F02 | Footer links work | Click each link | Correct destination or placeholder |
-| F03 | Copyright present | Inspect footer | "© 2026 MyBlog. All rights reserved." visible |
+| F03 | Copyright present | Inspect footer | "© 2026 HIGH BLOGGING. All rights reserved." visible |
 | F04 | Footer auth link | Click "Login / Sign up" | Auth page opens |
+| F05 | Footer contact | Inspect footer | Phone + address + pin code shown |
 
-## 6. Responsive
+## 8. Responsive
 
 | ID | Scenario | Steps | Expected Result |
 | --- | -------- | ----- | --------------- |

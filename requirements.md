@@ -65,14 +65,24 @@ separate `BLOG/auth/` feature (see `BLOG/auth/requirements.md`).
 | Content | Heading + email input + Subscribe button |
 | Behaviour | Validate email, show success/error message (frontend only) |
 
-### 4.5 Footer
+### 4.5 About & Contact (homepage section)
 
 | Item | Details |
 | ---- | ------- |
-| Link columns | About, Categories, Social (standard) |
-| Copyright | > **TODO:** confirm text (e.g. © 2026 MyBlog. All rights reserved.) |
+| Position | Posts grid ke baad, newsletter se pehle |
+| Content | Heading "About MyBlog", intro + mission, 4 stat tiles, 7 topic chips, 5 author cards, contact card |
+| Contact card | Owner **HIGH BLOGGING**, phone **6306260243** (`tel:+916306260243`), address **Ghurwara Raebareli (UP)**, pin code **229125**, email |
+| CTA | "Full about page →" → `about/about.html` |
+| Data source | `assets/site.js` → `window.SITE` |
+
+### 4.6 Footer
+
+| Item | Details |
+| ---- | ------- |
+| Link columns | About (full about page link), Categories, Contact (phone) |
+| Copyright | © 2026 HIGH BLOGGING. All rights reserved. |
 | Newsletter | Covered in newsletter section above (no duplicate in footer) |
-| Contact info | > **TODO:** email / social URLs |
+| Contact info | HIGH BLOGGING · 6306260243 · Ghurwara Raebareli (UP) · 229125 |
 
 ## 5. Design & UX
 
@@ -99,6 +109,7 @@ separate `BLOG/auth/` feature (see `BLOG/auth/requirements.md`).
 | ------- | ------ | ---- |
 | Login / Signup + Dashboard | `BLOG/auth/` | `BLOG/auth/requirements.md`, `BLOG/auth/test-cases.md` |
 | 10 full articles + reader page | `BLOG/blog-posts/` | `BLOG/blog-posts/requirements.md`, `BLOG/blog-posts/test-cases.md` |
+| About page + contact details | `BLOG/about/` | `BLOG/about/requirements.md`, `BLOG/about/test-cases.md` |
 
 | Item | Details |
 | ---- | ------- |
