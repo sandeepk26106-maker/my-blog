@@ -44,6 +44,8 @@ BLOG/
 ├── post.html             # Post reader page (?slug=…)
 ├── requirements.md       # Homepage requirement spec
 ├── test-cases.md         # Homepage acceptance tests
+├── playwright.config.js  # Playwright config (desktop + mobile projects)
+├── package.json          # npm scripts (serve / test / evidence / vendor)
 ├── assets/
 │   ├── theme.css         # Shared light + dark theme, components, prose styles
 │   ├── site.js           # Site info: owner, contact, topics, authors, stats
@@ -56,12 +58,52 @@ BLOG/
 │   ├── posts.js          # All 10 articles (window.BLOG_POSTS)
 │   ├── requirements.md   # Content + reader spec
 │   └── test-cases.md     # Content + reader tests
-└── auth/
-    ├── auth.html         # Login + Signup (tabbed single page)
-    ├── dashboard.html    # Protected dashboard
-    ├── requirements.md   # Auth requirement spec
-    └── test-cases.md     # Auth acceptance tests
+├── auth/
+│   ├── auth.html         # Login + Signup (tabbed single page)
+│   ├── dashboard.html    # Protected dashboard
+│   ├── requirements.md   # Auth requirement spec
+│   └── test-cases.md     # Auth acceptance tests
+├── tests/                # Playwright specs + evidence reporter
+│   ├── fixtures.js       # Shared fixtures (CDN interception, goto helper)
+│   ├── serve.js          # Static server on :8099
+│   ├── fetch-vendor.js   # Caches the CDN libs for offline/fast test runs
+│   ├── evidence-reporter.js
+│   ├── homepage.spec.js  auth.spec.js  posts.spec.js  about.spec.js
+└── evidence/             # QA evidence pack (committed)
+    ├── evidence.md       # Master report — every case with screenshot + video
+    ├── homepage/evidence.md
+    ├── auth/evidence.md
+    ├── posts/evidence.md
+    ├── about/evidence.md
+    ├── screens/*.png     # 244 screenshots
+    └── videos/*.webm     # 244 videos
 ```
+
+## QA & Evidence
+
+Har test case ka apna screenshot aur video Playwright automatically capture
+karta hai, aur `tests/evidence-reporter.js` unhe `evidence/` me pack kar deta hai.
+
+```bash
+npm run vendor   # CDN libs cache karo (ek baar)
+npm run serve    # static server on :8099 (doosre terminal me)
+npm test         # poora suite + evidence pack regenerate
+npm run report   # HTML report kholo
+```
+
+**Latest run:** 244 executed · 243 passed · 0 failed · 1 skipped
+(desktop-chromium + mobile-chromium) — `evidence/evidence.md` me poora report.
+
+| Feature | Spec | Cases | Evidence |
+| ------- | ---- | ----- | -------- |
+| Homepage | `tests/homepage.spec.js` | 70 | [evidence/homepage/evidence.md](evidence/homepage/evidence.md) |
+| Login / Signup / Dashboard | `tests/auth.spec.js` | 58 | [evidence/auth/evidence.md](evidence/auth/evidence.md) |
+| Articles & Reader | `tests/posts.spec.js` | 54 | [evidence/posts/evidence.md](evidence/posts/evidence.md) |
+| About & Contact | `tests/about.spec.js` | 62 | [evidence/about/evidence.md](evidence/about/evidence.md) |
+
+**Test run offline bhi chalta hai** — `tests/fixtures.js` CDN requests ko
+`tests/vendor/` ke local copies se serve karta hai, isliye run fast aur
+deterministic rehta hai. Site khud CDN se load karta hai.
 
 ## The 10 articles
 

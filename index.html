@@ -208,7 +208,7 @@ function App() {
         <div className="container">
           <h2>Subscribe to newsletter</h2>
           <p style={{ color: "var(--muted)", margin: "8px 0 0" }}>Get new posts in your inbox.</p>
-          <form onSubmit={subscribe}>
+          <form onSubmit={subscribe} noValidate>
             <input type="email" placeholder="you@example.com" aria-label="Email for newsletter"
               value={email} onChange={e => setEmail(e.target.value)} />
             {" "}
