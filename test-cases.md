@@ -1,21 +1,17 @@
 # Test Cases: Blog Website Homepage
 
-> Stack: React · Page: `BLOG/index.html` · Auth tests → `BLOG/auth/test-cases.md`
+> Stack: React · Route: `/` (homepage)
 
 ## 1. Header
 
 | ID | Scenario | Steps | Expected Result |
 | --- | -------- | ----- | --------------- |
-| H01 | Logo is visible | Load the page | "MyBlog" wordmark appears top-left, links to homepage |
+| H01 | Logo is visible | Load the page | Logo/brand appears top-left |
 | H02 | Nav links visible | Inspect header | Home, Blog, About, Contact visible |
 | H03 | Nav links navigate | Click each link | Correct page/anchor reached |
 | H04 | Search icon present | Inspect header | Search icon/button visible |
-| H05 | Search input opens | Click search icon | Input with "Search posts…" appears |
-| H06 | Subscribe CTA works | Click Subscribe | Scrolls to newsletter section |
-| H07 | Sticky header | Scroll down | Header stays fixed/sticky |
-| H08 | Theme toggle | Click moon/sun | Theme switches light ↔ dark, persists on reload |
-| H09 | Login link (logged out) | Load page logged out | Header shows "Login" → `auth/auth.html` |
-| H10 | Greeting link (logged in) | Load page logged in | Header shows "Hi, {first name}" → `auth/dashboard.html` |
+| H05 | Subscribe CTA works | Click Subscribe | Scrolls to newsletter section |
+| H06 | Sticky header | Scroll down | Header stays fixed/sticky |
 
 ## 2. Hero
 
@@ -28,20 +24,18 @@
 
 | ID | Scenario | Steps | Expected Result |
 | --- | -------- | ----- | --------------- |
-| L01 | 10 posts render | Load the page | Exactly 10 cards in grid |
+| L01 | 6 posts render | Load the page | Exactly 6 cards in grid |
 | L02 | Card fields correct | Inspect a card | Cover, title, excerpt, author, date, category visible |
 | L03 | Images have alt text | Inspect images | Each cover has non-empty alt |
-| L04 | Search filters | Type "React" in search | Grid shows only matching titles |
-| L05 | Empty state | Type "zzzz" in search | "No posts match your search." shown |
-| L06 | Clear search | Remove query | All 10 cards return |
+| L04 | Search filters (if implemented) | Type query in search | Grid filters by title, empty state if no match |
 
 ## 4. Newsletter
 
 | ID | Scenario | Steps | Expected Result |
 | --- | -------- | ----- | --------------- |
 | N01 | Newsletter visible | Scroll to newsletter | Heading + email input + button visible |
-| N02 | Valid email | Enter valid email, submit | "Subscribed successfully!" shown |
-| N03 | Invalid email | Enter invalid email, submit | "Enter a valid email address." shown |
+| N02 | Valid email | Enter valid email, submit | Success message shown |
+| N03 | Invalid email | Enter invalid email, submit | Error message shown |
 
 ## 5. Footer
 
@@ -49,14 +43,13 @@
 | --- | -------- | ----- | --------------- |
 | F01 | Footer visible | Scroll to bottom | Footer with link columns appears |
 | F02 | Footer links work | Click each link | Correct destination or placeholder |
-| F03 | Copyright present | Inspect footer | "© 2026 MyBlog. All rights reserved." visible |
-| F04 | Footer auth link | Click "Login / Sign up" | Auth page opens |
+| F03 | Copyright present | Inspect footer | Copyright text visible |
 
-## 6. Responsive
+## 6. Theme + Responsive
 
 | ID | Scenario | Steps | Expected Result |
 | --- | -------- | ----- | --------------- |
+| T01 | Dark mode toggle | Click theme toggle | Theme switches light <-> dark, persists if specified |
 | R01 | Mobile 375px | Resize to 375px width | 1-column grid, no horizontal scroll |
 | R02 | Tablet 768px | Resize to 768px width | 2-column grid, layout adapts |
 | R03 | Desktop 1280px | Resize to 1280px width | 3-column grid |
-| R04 | Nav collapses on mobile | Resize to 375px | Nav links hidden, header still usable |

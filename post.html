@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MyBlog — Article</title>
+  <meta name="description" content="Read the latest articles on MyBlog — React, CSS, JavaScript, UX, SEO and DevOps." />
+  <link rel="stylesheet" href="assets/theme.css" />
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script src="assets/auth.js"></script>
+  <script src="blog-posts/posts.js"></script>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { useState, useEffect, useMemo } = React;
+
+const POSTS = window.BLOG_POSTS || [];
+
+function getSlug() {
+  return new URLSearchParams(window.location.search).get("slug") || "";
+}
+
+function Header({ session }) {
+  const [theme, setTheme] = useState(AuthStore.getTheme());
+  useEffect(() => {
+    document.documentElement.setAttribute("data-theme", theme);
+    AuthStore.setTheme(theme);
+  }, [theme]);
+  return (
+    <header className="header">
+      <div className="container header-inner">
+        <a className="logo" href="index.html">MyBlog</a>
+        <nav className="nav">
+          <a href="index.html">Home</a>
+          <a href="index.html#blog">Blog</a>
+          <a href="index.html#about">About</a>
+          <a href="index.html#contact">Contact</a>
+        </nav>
+        <div className="spacer" />
+        <button className="icon-btn" onClick={() => setTheme(t => (t === "light" ? "dark" : "light"))} title="Toggle theme">
+          {theme === "light" ? "🌙" : "☀️"}
+        </button>
+        {session ? (
+          <a className="auth-link" href="auth/dashboard.html">Hi, {session.name.split(" ")[0]}</a>
+        ) : (
+          <a className="auth-link" href="auth/auth.html">Login</a>
+        )}
+      </div>
+    </header>
+  );
+}
+
+function TableOfContents({ html }) {
+  const headings = useMemo(() => {
+    const matches = [];
+    const re = /<h2[^>]*>(.*?)<\/h2>/g;
+    let m;
+    while ((m = re.exec(html)) !== null) {
+      matches.push({ text: m[1].replace(/<[^>]+>/g, ""), id: "sec-" + matches.length });
+    }
+    return matches;
+  }, [html]);
+
+  if (!headings.length) return null;
+
+  return (
+    <div className="toc">
+      <details open>
+        <summary>On this page</summary>
+        <ol>
+          {headings.map(h => (
+            <li key={h.id}><a href={"#" + h.id}>{h.text}</a></li>
+          ))}
+        </ol>
+      </details>
+    </div>
+  );
+}
+
+function Article({ post }) {
+  const html = useMemo(() => {
+    // add ids to h2 so the table of contents can link to them
+    let i = 0;
+    return post.body.replace(/<h2>(.*?)<\/h2>/g, (full, inner) => {
+      i += 1;
+      return `<h2 id="sec-${i}">${inner}</h2>`;
+    });
+  }, [post.body]);
+
+  return (
+    <>
+      <div className="post-head">
+        <span className="cat">{post.category}</span>
+        <h1>{post.title}</h1>
+        <div className="post-meta">
+          <span>By {post.author}</span>
+          <span>·</span>
+          <span>{post.date}</span>
+          <span>·</span>
+          <span>{post.readTime} min read</span>
+        </div>
+      </div>
+
+      <div className="post-cover">
+        <img src={post.cover} alt={post.title} />
+      </div>
+
+      <TableOfContents html={post.body} />
+
+      <article className="prose" dangerouslySetInnerHTML={{ __html: html }} />
+
+      <div className="post-foot">
+        <div className="post-nav">
+          <a href="index.html#blog"><span>← Back</span>All posts</a>
+          <a href="index.html#newsletter"><span>Stay updated</span>Subscribe to newsletter</a>
+        </div>
+      </div>
+    </>
+  );
+}
+
+function Related({ post }) {
+  const others = POSTS.filter(p => p.id !== post.id).slice(0, 3);
+  return (
+    <section className="related container" style={{ paddingBottom: "40px" }}>
+      <h2>Keep reading</h2>
+      <div className="grid">
+        {others.map(p => (
+          <a className="card" key={p.id} href={"post.html?slug=" + p.slug} style={{ display: "block" }}>
+            <img src={p.cover} alt={p.title} loading="lazy" />
+            <div className="card-body">
+              <span className="cat">{p.category}</span>
+              <h3>{p.title}</h3>
+              <p>{p.excerpt}</p>
+              <div className="meta">{p.author} · {p.readTime} min read</div>
+            </div>
+          </a>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function App() {
+  const [session, setSession] = useState(AuthStore.getSession());
+  const slug = getSlug();
+  const post = POSTS.find(p => p.slug === slug);
+
+  useEffect(() => {
+    document.title = post ? `${post.title} — MyBlog` : "Post not found — MyBlog";
+    const desc = document.querySelector('meta[name="description"]');
+    if (desc && post) desc.setAttribute("content", post.excerpt);
+    window.scrollTo(0, 0);
+  }, [slug]);
+
+  useEffect(() => {
+    const onStorage = (e) => {
+      if (e.key === AuthStore.SESSION_KEY) setSession(AuthStore.getSession());
+    };
+    window.addEventListener("storage", onStorage);
+    return () => window.removeEventListener("storage", onStorage);
+  }, []);
+
+  return (
+    <div>
+      <Header session={session} />
+      <main>
+        {!post ? (
+          <div className="container" style={{ padding: "80px 16px", textAlign: "center" }}>
+            <h1>Post not found</h1>
+            <p className="empty">Ye post exist nahi karti ya link purana hai.</p>
+            <a className="btn" href="index.html#blog">← All posts</a>
+          </div>
+        ) : (
+          <>
+            <Article post={post} />
+            <Related post={post} />
+          </>
+        )}
+      </main>
+      <footer className="footer container">
+        <div><b>MyBlog</b><br />© 2026 MyBlog. All rights reserved.</div>
+        <div id="about">About<br />Categories<br />Contact: hello@myblog.test</div>
+        <div><a href="auth/auth.html">Login / Sign up</a></div>
+      </footer>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+</script>
+</body>
+</html>

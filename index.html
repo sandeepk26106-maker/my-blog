@@ -9,24 +9,14 @@
   <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
   <script src="assets/auth.js"></script>
+  <script src="blog-posts/posts.js"></script>
 </head>
 <body>
 <div id="root"></div>
 <script type="text/babel">
 const { useState, useEffect, useMemo } = React;
 
-const POSTS = [
-  { id: 1,  title: "Getting Started with React",     excerpt: "Learn components, props and state from scratch.",        author: "Aarav",  date: "2026-10-20", category: "React",     img: "https://picsum.photos/seed/blog1/600/300" },
-  { id: 2,  title: "CSS Grid in 10 Minutes",         excerpt: "Build responsive layouts without the pain.",               author: "Diya",   date: "2026-10-18", category: "CSS",       img: "https://picsum.photos/seed/blog2/600/300" },
-  { id: 3,  title: "JavaScript ES2026 Features",      excerpt: "What is new in modern JavaScript.",                        author: "Kabir",  date: "2026-10-15", category: "JavaScript",img: "https://picsum.photos/seed/blog3/600/300" },
-  { id: 4,  title: "Dark Mode Done Right",            excerpt: "Theme toggles with CSS variables, done cleanly.",          author: "Meera",  date: "2026-10-12", category: "UX",        img: "https://picsum.photos/seed/blog4/600/300" },
-  { id: 5,  title: "Blog SEO Basics",                 excerpt: "Simple tricks to get your posts discovered.",               author: "Aarav",  date: "2026-10-10", category: "SEO",       img: "https://picsum.photos/seed/blog5/600/300" },
-  { id: 6,  title: "Deploy React for Free",           excerpt: "Vercel, Netlify and Firebase — pick one and ship.",         author: "Rohan",  date: "2026-10-08", category: "DevOps",    img: "https://picsum.photos/seed/blog6/600/300" },
-  { id: 7,  title: "Mastering Flexbox Layouts",       excerpt: "One layout system for every screen size.",                 author: "Diya",   date: "2026-10-05", category: "CSS",       img: "https://picsum.photos/seed/blog7/600/300" },
-  { id: 8,  title: "React Hooks Cheat Sheet",         excerpt: "useState, useEffect and everything between.",              author: "Kabir",  date: "2026-10-02", category: "React",     img: "https://picsum.photos/seed/blog8/600/300" },
-  { id: 9,  title: "Writing Tech Posts That Get Read", excerpt: "Hooks, structure and editing habits that pay off.",         author: "Meera",  date: "2026-09-29", category: "Writing",   img: "https://picsum.photos/seed/blog9/600/300" },
-  { id: 10, title: "Git Workflow for Solo Devs",       excerpt: "Branches, commits and a clean history.",                    author: "Rohan",  date: "2026-09-26", category: "DevOps",    img: "https://picsum.photos/seed/blog10/600/300" },
-];
+const POSTS = window.BLOG_POSTS || [];
 
 function Header({ session, query, setQuery }) {
   const [theme, setTheme] = useState(AuthStore.getTheme());
@@ -72,15 +62,15 @@ function Header({ session, query, setQuery }) {
 
 function PostCard({ post }) {
   return (
-    <article className="card" data-testid="post-card">
-      <img src={post.img} alt={post.title} loading="lazy" />
+    <a className="card" data-testid="post-card" href={"post.html?slug=" + post.slug} style={{ display: "block" }}>
+      <img src={post.cover} alt={post.title} loading="lazy" />
       <div className="card-body">
         <span className="cat">{post.category}</span>
         <h3>{post.title}</h3>
         <p>{post.excerpt}</p>
-        <div className="meta">{post.author} · {post.date}</div>
+        <div className="meta">{post.author} · {post.date} · {post.readTime} min read</div>
       </div>
-    </article>
+    </a>
   );
 }
 
@@ -98,10 +88,16 @@ function App() {
     return () => window.removeEventListener("storage", onStorage);
   }, []);
 
-  const filtered = useMemo(
-    () => POSTS.filter(p => p.title.toLowerCase().includes(query.toLowerCase())),
-    [query]
-  );
+  const filtered = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    if (!q) return POSTS;
+    return POSTS.filter(p =>
+      p.title.toLowerCase().includes(q) ||
+      p.excerpt.toLowerCase().includes(q) ||
+      p.category.toLowerCase().includes(q) ||
+      p.author.toLowerCase().includes(q)
+    );
+  }, [query]);
 
   const subscribe = (e) => {
     e.preventDefault();
@@ -126,7 +122,7 @@ function App() {
       </section>
 
       <main id="posts" className="container">
-        <h2 id="blog" className="section-title">Latest posts</h2>
+        <h2 id="blog" className="section-title">Latest posts <span style={{ color: "var(--muted)", fontSize: "16px", fontWeight: "500" }}>({filtered.length})</span></h2>
         {filtered.length === 0 ? (
           <p className="empty">No posts match your search.</p>
         ) : (
