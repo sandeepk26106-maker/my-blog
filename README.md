@@ -10,9 +10,12 @@ protected dashboard.
 
 - **Sticky header** — logo, navigation, search, theme toggle, auth link, Subscribe CTA
 - **Hero** — blog title, tagline, "Start Reading" CTA
-- **10-post grid** — cover image, title, excerpt, author, date, category
+- **10-post grid** — cover image, title, excerpt, author, date, category, read time
   (3 cols desktop / 2 tablet / 1 mobile)
-- **Search** — filters the grid by post title, with an empty state
+- **Search** — filters the grid by title, excerpt, category ya author, with an empty state
+- **Post reader page** (`post.html?slug=…`) — cover, meta, auto table of contents,
+  full article, related posts
+- **10 full articles** — Hinglish, long-form, code examples, tables (780–1400 words each)
 - **Newsletter** — client-side email validation + success/error states
 - **Light + dark mode** — CSS variables, toggle persists in `localStorage`
 - **Login / Signup** — single page with tabs, email + password, full validation
@@ -24,17 +27,37 @@ protected dashboard.
 ```
 BLOG/
 ├── index.html            # Homepage (React, 10 posts)
+├── post.html             # Post reader page (?slug=…)
 ├── requirements.md       # Homepage requirement spec
 ├── test-cases.md         # Homepage acceptance tests
 ├── assets/
-│   ├── theme.css         # Shared light + dark theme, components, responsive
+│   ├── theme.css         # Shared light + dark theme, components, prose styles
 │   └── auth.js           # Shared AuthStore (localStorage mock)
+├── blog-posts/
+│   ├── posts.js          # All 10 articles (window.BLOG_POSTS)
+│   ├── requirements.md   # Content + reader spec
+│   └── test-cases.md     # Content + reader tests
 └── auth/
     ├── auth.html         # Login + Signup (tabbed single page)
     ├── dashboard.html    # Protected dashboard
     ├── requirements.md   # Auth requirement spec
     └── test-cases.md     # Auth acceptance tests
 ```
+
+## The 10 articles
+
+| # | Title | Category | Author |
+| - | ----- | -------- | ------ |
+| 1 | Getting Started with React | React | Aarav Sharma |
+| 2 | CSS Grid in 10 Minutes | CSS | Diya Sharma |
+| 3 | JavaScript ES2026 Features | JavaScript | Kabir Nair |
+| 4 | Dark Mode Done Right | UX | Meera Iyer |
+| 5 | Blog SEO Basics | SEO | Aarav Sharma |
+| 6 | Deploy React for Free | DevOps | Rohan Verma |
+| 7 | Mastering Flexbox Layouts | CSS | Diya Sharma |
+| 8 | React Hooks Cheat Sheet | React | Kabir Nair |
+| 9 | Writing Tech Posts That Get Read | Writing | Meera Iyer |
+| 10 | Git Workflow for Solo Devs | DevOps | Rohan Verma |
 
 ## Run locally
 

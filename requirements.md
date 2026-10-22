@@ -93,11 +93,18 @@ separate `BLOG/auth/` feature (see `BLOG/auth/requirements.md`).
 | Accessibility level | Basic: semantic HTML, alt text, keyboard focus, contrast in both themes |
 | Existing design system | `assets/theme.css` (CSS variables, light + dark) |
 
-## 7. Related Feature
+## 7. Related Features
 
 | Feature | Folder | Docs |
 | ------- | ------ | ---- |
 | Login / Signup + Dashboard | `BLOG/auth/` | `BLOG/auth/requirements.md`, `BLOG/auth/test-cases.md` |
+| 10 full articles + reader page | `BLOG/blog-posts/` | `BLOG/blog-posts/requirements.md`, `BLOG/blog-posts/test-cases.md` |
+
+| Item | Details |
+| ---- | ------- |
+| Card click | Opens `post.html?slug=<slug>` — full article, TOC, cover, related posts |
+| Content source | `BLOG/blog-posts/posts.js` → `window.BLOG_POSTS` (shared by homepage + reader) |
+| Search | Filters by title, excerpt, category ya author |
 
 ## 8. Open Questions
 
