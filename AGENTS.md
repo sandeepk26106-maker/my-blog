@@ -30,6 +30,11 @@ Never scatter blog files into other directories (no `rfp/` copies, no
 - **Design** → light + dark mode via CSS variables, mobile-first responsive
   (3 cols desktop / 2 tablet / 1 mobile), basic a11y (semantic HTML, alt
   text, keyboard focus, contrast in both themes).
+- **Shared data** → site/contact/author info `assets/site.js`; auth store
+  `assets/auth.js`; articles `blog-posts/posts.js`. Pages read from these —
+  do not hard-code the same values in two places.
 - **Docs** → use the `create-rfp` skill for requirement + test-case docs.
-- **QA** → use the `playwright-testing` skill; evidence output stays inside
-  this folder.
+- **QA** → use the `playwright-testing` skill; specs in `tests/`, evidence
+  output in `evidence/` (master + per-feature `evidence.md`, plus
+  `screens/` and `videos/`). The evidence pack **is committed**; the run
+  artifacts (`test-results/`, `playwright-report/`) are not.

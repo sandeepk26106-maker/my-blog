@@ -9,6 +9,7 @@
   <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
   <script src="../assets/auth.js"></script>
+  <script src="../assets/site.js"></script>
 </head>
 <body>
 <div id="root"></div>
@@ -48,8 +49,8 @@ function App() {
           <nav className="nav">
             <a href="../index.html">Home</a>
             <a href="../index.html#blog">Blog</a>
-            <a href="../index.html#about">About</a>
-          </nav>
+            <a href="../about/about.html">About</a>
+        </nav>
           <div className="spacer" />
           <button className="icon-btn" onClick={() => setTheme(t => t === "light" ? "dark" : "light")} title="Toggle theme">
             {theme === "light" ? "🌙" : "☀️"}
@@ -88,8 +89,13 @@ function App() {
       </main>
 
       <footer className="footer container">
-        <div><b>MyBlog</b><br />© 2026 MyBlog. All rights reserved.</div>
-        <div>About<br />Categories<br />Contact: hello@myblog.test</div>
+        <div><b>{window.SITE.name}</b><br />© 2026 {window.SITE.owner}. All rights reserved.</div>
+        <div>
+          <a href="about.html">About</a><br />
+          <a href={window.SITE.phoneHref}>{window.SITE.phone}</a><br />
+          <a href="../index.html#blog">Blog</a>
+        </div>
+        <div>{window.SITE.address}<br />Pin code — {window.SITE.pincode}</div>
       </footer>
     </div>
   );

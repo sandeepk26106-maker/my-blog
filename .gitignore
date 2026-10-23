@@ -1,21 +1,38 @@
 # Dependencies
 node_modules/
 
+# Build output
+dist/
+build/
+
+# Environment files (secrets!)
+.env
+.env.local
+
+# Logs
+*.log
+npm-debug.log*
+
+# Editor / OS
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
 # Temp / lock files
 ~$*
 .tmp-*
 *.tmp
 *.bak
 
-# Test & QA artifacts
-evidence/
+# Playwright run artifacts (the evidence pack itself IS committed)
 test-results/
 playwright-report/
+
+# Cached CDN copies used only to speed up the Playwright run
+# (re-create with: npm run vendor)
+tests/vendor/
 
 # Local env
 .env
 .env.local
-
-# OS
-.DS_Store
-Thumbs.db

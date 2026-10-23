@@ -1,0 +1,22 @@
+{
+  "name": "myblog",
+  "version": "1.0.0",
+  "description": "MyBlog — React blog homepage, 10 articles, login/signup + protected dashboard, with Playwright QA evidence",
+  "private": true,
+  "scripts": {
+    "serve": "node tests/serve.js",
+    "vendor": "node tests/fetch-vendor.js",
+    "pretest": "node tests/fetch-vendor.js",
+    "test": "playwright test",
+    "evidence": "playwright test",
+    "test:headed": "playwright test --headed",
+    "test:single": "playwright test --project=desktop-chromium --workers=1",
+    "report": "playwright show-report playwright-report"
+  },
+  "keywords": ["react", "blog", "playwright", "evidence"],
+  "author": "HIGH BLOGGING",
+  "license": "MIT",
+  "devDependencies": {
+    "@playwright/test": "^1.64.1"
+  }
+}
